@@ -16,6 +16,9 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigationView.setOnItemSelectedListener {
 
             val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+            fragmentTransaction.setCustomAnimations(
+                com.google.android.material.R.anim.abc_slide_in_top,
+                com.google.android.material.R.anim.abc_slide_out_bottom)
 
             when (it.itemId) {
                 R.id.nav_home -> {
@@ -29,10 +32,23 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            fragmentTransaction.addToBackStack(null)
+            fragmentTransaction.setReorderingAllowed(true) // Optimizes the state changes of the fragments involved in the transaction so that animations and transitions work correctly
+            //fragmentTransaction.addToBackStack(null)
             fragmentTransaction.commit()
 
             return@setOnItemSelectedListener true
+        }
+    }
+
+    override fun onBackPressed() {
+        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+
+        if(R.id.nav_home == binding.bottomNavigationView.selectedItemId)
+            super.onBackPressed()
+        else{
+            binding.bottomNavigationView.selectedItemId = R.id.nav_home
+            fragmentTransaction.replace(R.id.fragmentContainer, HomeFragment())
+            fragmentTransaction.commit()
         }
     }
 }
